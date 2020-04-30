@@ -17,11 +17,14 @@ void enableRawMode() {
 	
 	//c_iflag is a input flag
 	//it disables Ctrl+S and Ctrl+Q
-	raw.c_iflag &= ~(IXON);
+	//Ctrl + M should actually be read as 13, whereas we find it to be 10
+	//Terminal is helpfully translating any carriage returns (13, '\r') inputted by the user into newlines (10, '\n').
+	//ICRNL fixes this behavious CR-Carriage Return NL-Newline
+	raw.c_iflag &= ~(ICRNL | IXON);
 
 	//c_lflag misc flag
 	//ICANON is a flag which is responsible for Canonical Mode
-	//ECHO is a bitflag, defined as 00000000000000000000000000001000 
+	//ECHO is a bitflag, defined as 00000000000000000000000000001000 it echos character on terminal
 	//ISIG disables Ctrl+C and Ctrl+Z
 	//IEXTEN disables Ctrl+V, which doesn't usually cause problems on most of systems
 	//IEXTEN also disables Ctrl+O, which discards this character on MacOS
