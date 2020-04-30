@@ -6,6 +6,8 @@ void enableRawMode() {
 
 	tcgetattr(STDIN_FILENO, &raw);
 
+	//c_lflag misc flag
+	//ECHO is a bitflag, defined as 00000000000000000000000000001000 
 	raw.c_lflag &= ~(ECHO);
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
