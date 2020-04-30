@@ -15,6 +15,10 @@ void enableRawMode() {
 
 	struct termios raw = orig_termios;
 	
+	//c_iflag is a input flag
+	//it disables Ctrl+S and Ctrl+Q
+	raw.c_iflag &= ~(IXON);
+
 	//c_lflag misc flag
 	//ICANON is a flag which is responsible for Canonical Mode
 	//ECHO is a bitflag, defined as 00000000000000000000000000001000 
