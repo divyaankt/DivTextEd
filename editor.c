@@ -39,13 +39,21 @@ void enableRawMode() {
 	//IEXTEN also disables Ctrl+O, which discards this character on MacOS
 	raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
 
+	//The VMIN value sets the minimum number of bytes of input needed before read() can return
+	raw.c_cc[VMIN] = 0;
+	
+	//The VTIME value sets the maximum amount of time to wait before read() returns
+	//We set it to 1/10th of a sec or 100 millisecs
+	raw.c_cc[VTIME] = 1;
+
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 int main() {
 	enableRawMode();
-	char c;
-
-	while(read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+	
+	while(1) {
+		char c = '\0';
+		read(STDIN_FILENO, &c, 1);
 		if (iscntrl(c)) {
 			//Block is executed when c is a control character
 			//ASCII 0-31 as well 127 are all control characters
@@ -56,6 +64,8 @@ int main() {
 			//Without \r, the output shifts rightward constantly at newline
 			printf("%d ('%c')\r\n", c, c);
 		}
+		if (c == 'q')
+			break;
 	}
 
 	return 0;
