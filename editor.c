@@ -22,6 +22,11 @@ void enableRawMode() {
 	//ICRNL fixes this behavious CR-Carriage Return NL-Newline
 	raw.c_iflag &= ~(ICRNL | IXON);
 
+	//c_oflag is an output flag
+	//Terminal translates "\n" to "\r\n", this is required for start of newline
+	//turn-off output processing by OPOST flag
+	raw.c_oflag &= ~(OPOST);
+
 	//c_lflag misc flag
 	//ICANON is a flag which is responsible for Canonical Mode
 	//ECHO is a bitflag, defined as 00000000000000000000000000001000 it echos character on terminal
@@ -40,10 +45,10 @@ int main() {
 		if (iscntrl(c)) {
 			//Block is executed when c is a control character
 			//ASCII 0-31 as well 127 are all control characters
-			printf("%d\n", c);
+			printf("%d\r\n", c);
 		}
 		else{
-			printf("%d ('%c')\n", c, c);
+			printf("%d ('%c')\r\n", c, c);
 		}
 	}
 
