@@ -11,7 +11,7 @@ void enableRawMode() {
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 int main() {
-
+	enableRawMode();
 	char c;
 
 	while(read(STDIN_FILENO, &c, 1) == 1 && c != 'q');
