@@ -14,7 +14,7 @@ void enableRawMode() {
 	struct termios raw = orig_termios;
 	//c_lflag misc flag
 	//ECHO is a bitflag, defined as 00000000000000000000000000001000 
-	raw.c_lflag &= ~(ECHO);
+	raw.c_lflag &= ~(ECHO | ICANON);
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
