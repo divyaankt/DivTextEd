@@ -1,3 +1,4 @@
+/*** HEADER ***/
 #include <ctype.h>
 #include <stdio.h>
 #include <errno.h>
@@ -5,8 +6,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/*** DATA ***/
 struct termios orig_termios;
 
+/*** TERMINAL ***/
 void die(const char *s) {
 	//This function looks at the global errorno set by functions on exiting
 	//Based on that it prints a descriptive error message
@@ -62,6 +65,8 @@ void enableRawMode() {
 	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
 		die("tcsetattr");
 }
+
+/*** INIT ***/
 int main() {
 	enableRawMode();
 	
