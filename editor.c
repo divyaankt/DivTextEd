@@ -23,7 +23,9 @@ void enableRawMode() {
 	//ICANON is a flag which is responsible for Canonical Mode
 	//ECHO is a bitflag, defined as 00000000000000000000000000001000 
 	//ISIG disables Ctrl+C and Ctrl+Z
-	raw.c_lflag &= ~(ECHO | ICANON | ISIG);
+	//IEXTEN disables Ctrl+V, which doesn't usually cause problems on most of systems
+	//IEXTEN also disables Ctrl+O, which discards this character on MacOS
+	raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
