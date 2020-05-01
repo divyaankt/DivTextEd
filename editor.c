@@ -15,6 +15,9 @@ struct termios orig_termios;
 
 /*** TERMINAL ***/
 void die(const char *s) {
+	write(STDOUT_FILENO, "\x1b[2J", 4);
+  	write(STDOUT_FILENO, "\x1b[H", 3);
+
 	//This function looks at the global errorno set by functions on exiting
 	//Based on that it prints a descriptive error message
 	//String s is to provide context to the error
@@ -94,6 +97,8 @@ void editorProcessKeypress() {
 
 	switch(c) {
 		case CTRL_KEY('q'):
+			write(STDOUT_FILENO, "\x1b[2J", 4);
+  			write(STDOUT_FILENO, "\x1b[H", 3);
 			exit(0);
 		break;	
 	}
