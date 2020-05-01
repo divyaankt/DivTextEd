@@ -70,28 +70,33 @@ void enableRawMode() {
 		die("tcsetattr");
 }
 
+char editorReadKey() {
+	int nread;
+	char c;
+	while((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+		if(nread == -1 && errno != EAGAIN)
+			die("read");
+	}
+	return c;
+}
+
+/*** INPUT ***/
+void editorProcessKeypress() {
+	char c = editorReadKey();
+
+	switch(c) {
+		case CTRL_KEY('q'):
+			exit(0);
+		break;	
+	}
+}
+
 /*** INIT ***/
 int main() {
 	enableRawMode();
 	
 	while(1) {
-		char c = '\0';
-		//EAGAIN is mostly a Cygwin specific error
-		if(read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN)
-			die("read");
-
-		if (iscntrl(c)) {
-			//Block is executed when c is a control character
-			//ASCII 0-31 as well 127 are all control characters
-			//Without \r, the output shifts rightward constantly at newline
-			printf("%d\r\n", c);
-		}
-		else{
-			//Without \r, the output shifts rightward constantly at newline
-			printf("%d ('%c')\r\n", c, c);
-		}
-		if (c == CTRL_KEY('q'))
-			break;
+		editorProcessKeypress();
 	}
 
 	return 0;
