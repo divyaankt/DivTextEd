@@ -84,11 +84,21 @@ char editorReadKey() {
 }
 
 /*** OUTPUT ***/
+
+void editorDrawRows() {
+	int y;
+	for (y=0; y<24; y++) {
+		write(STDOUT_FILENO, "~\r\n", 3);
+	}
+}
 void editorRefreshScreen() {
 	//\x1b[2J is a 4-byte escape sequence
 	write(STDOUT_FILENO, "\x1b[2J", 4);
 	//Position cursor at top-left of the terminal
 	write(STDOUT_FILENO, "\x1b[H", 3);
+
+	editorDrawRows();
+  	write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /*** INPUT ***/
