@@ -6,6 +6,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/*** DEFINE ***/
+//Ctrl key sets Upper 3 bits to zero, more precisely bits 5 and 6
+#define CTRL_KEY(k) ((k) & 0x1f)
+
 /*** DATA ***/
 struct termios orig_termios;
 
@@ -86,7 +90,7 @@ int main() {
 			//Without \r, the output shifts rightward constantly at newline
 			printf("%d ('%c')\r\n", c, c);
 		}
-		if (c == 'q')
+		if (c == CTRL_KEY('q'))
 			break;
 	}
 
