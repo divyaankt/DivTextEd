@@ -11,7 +11,12 @@
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 /*** DATA ***/
-struct termios orig_termios;
+//A struct to maintain terminal properties
+struct editorConfig {
+	struct termios orig_termios;
+};
+
+struct editorConfig E;
 
 /*** TERMINAL ***/
 void die(const char *s) {
@@ -26,17 +31,17 @@ void die(const char *s) {
 }
 
 void disableRawMode() {
-	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
 		die("tcsettattr");
 }
 
 void enableRawMode() {
-	if(tcgetattr(STDIN_FILENO, &orig_termios) == -1)
+	if(tcgetattr(STDIN_FILENO, &E.orig_termios) == -1)
 		die("tcgetattr");
 
 	atexit(disableRawMode);
 
-	struct termios raw = orig_termios;
+	struct termios raw = E.orig_termios;
 	
 	//c_iflag is a input flag
 	//it disables Ctrl+S and Ctrl+Q
@@ -98,6 +103,8 @@ void editorRefreshScreen() {
 	write(STDOUT_FILENO, "\x1b[H", 3);
 
 	editorDrawRows();
+
+	//After drawing ~ move to the top-left of screen 
   	write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
