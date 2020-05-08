@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 
 /*** DEFINE ***/
 //Ctrl key sets Upper 3 bits to zero, more precisely bits 5 and 6
@@ -13,6 +14,8 @@
 /*** DATA ***/
 //A struct to maintain terminal properties
 struct editorConfig {
+	int screenRows;
+	int screenColumns;
 	struct termios orig_termios;
 };
 
@@ -88,11 +91,27 @@ char editorReadKey() {
 	return c;
 }
 
+int getWindowSize(int *rows, int *cols) {
+	struct winsize ws;
+
+	//TIOCSWINSZ stands for Terminal IOCtl (which itself stands for Input/Output Control) 
+	//Get WINdow SiZe.)
+	if (ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws) == -1 || ws.ws_col == 0) {
+		return -1;
+	}
+	else {
+		//This is a common way to return multiple values from a function in C
+		*cols = ws.ws_col;
+		*rows = ws.ws_row;
+		return 0;
+	}
+}
+
 /*** OUTPUT ***/
 
 void editorDrawRows() {
 	int y;
-	for (y=0; y<24; y++) {
+	for (y=0; y<E.screenRows; y++) {
 		write(STDOUT_FILENO, "~\r\n", 3);
 	}
 }
@@ -122,9 +141,15 @@ void editorProcessKeypress() {
 }
 
 /*** INIT ***/
+
+void initEditor() {
+	if(getWindowSize(&E.screenRows, &E.screenColumns) == -1)
+		die("getWindowSize");
+}
 int main() {
 	enableRawMode();
-	
+	initEditor();
+
 	while(1) {
 		editorRefreshScreen();
 		editorProcessKeypress();
